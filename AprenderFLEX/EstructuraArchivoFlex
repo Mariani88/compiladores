@@ -1,0 +1,30 @@
+/*esto es un comentario, TODAS las lineas van al margen izquierdo, sino no compilara*/
+
+opciones
+
+/*opciones de compilacion de flex. En Ubuntu debe esta presente yynowrap*/     
+%option opcion        
+%option yynowrap
+
+Definiciones
+/*ejemplo: digito [0-9]	cuando se use digito en las reglas, debe escribirse asi: {digito} */
+<nombre>  <expresion_regular>  
+
+/*Inclusion de codigo C al archivo de salida. Debe corresponderse con estructura de un archivo C.Si ya esta la función main en este archivo, lo que esta aca debe ser codigo que deba ir antes del main*/
+%{codigo %}  
+
+%%
+reglas
+/*patron: expresion regular accion: codigo C a ejecutar al detectar conjunto de caracteres 
+que calce con patron ejemplo: {digito}   {printf ("Ingresaste un digito\n");}         
+Escribira "ingresaste un digito" al detectar un numero solo en toda una linea. */
+<patron> <accion>  
+
+
+%%
+
+codigo de usuario
+/* inicia el analizador lexico a traves de yylex*/
+void main() {    
+yylex(); 
+}
