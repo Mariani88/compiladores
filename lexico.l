@@ -28,7 +28,8 @@ boolean "boolean"
 const   "const"
 
 %%
-{ignora}   {;}
+";"      { return findelinea; }
+{ignora}+   {}
 {digit}	   {printf ("Ingresaste digit\n"); }
 {int}      {printf ("Ingresaste int\n");}
 {float}    {printf ("Ingresaste float\n");}
@@ -38,7 +39,6 @@ const   "const"
 {boolean}  {printf ("Ingresaste boolean\n");}
 
 "="        {printf("igual\n");}
-";"        {printf("Fin sentencia\n");}
 "!="       {printf("Diferente\n");}
 ","        {printf("Coma\n");}
 "=="       {printf("Igual logico\n");}
@@ -75,6 +75,3 @@ const   "const"
 
 .{256,}    {printf("error lexico %d \n",yylineno);} 
 %%
-
-
-
