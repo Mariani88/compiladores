@@ -11,11 +11,57 @@ int yyerror(const char *p) { printf("error");}
 %union {
 char cadena;
 int numero;
+
 }
 
+%token findelinea
 
-%token <cadena> OPDIV OPMULT PAR_CIERRA PAR_ABRE OPMENOS OPSUMA findelinea
+%token DEFDIGITO
+%token DEFENTERO
+%token DEFFLOTANTE
+%token DEFCHAR
+%token DEFCONSTANTE
+%token DEFSTRING
+%token DEFBOOLEANO
+
+%token IGUAL
+%token DISTINTO
+%token COMA
+%token COMPIGUAL
+%token MAYORIGUAL
+%token MENORIGUAL
+%token PAR_ABRE
+%token PAR_CIERRA
+%token MAYOR
+%token MENOR
+%token LLAVEABRE
+%token LLAVECIERRA
+%token OPSUMA
+%token OPMENOS
+%token OPMULT 
+%token OPDIV
+%token AND
+%token OR
+
+%token MAIN
+%token IF
+%token ELSE
+%token FOR
+%token WHILE
+
+
+%token ENTERO
+%token FLOTANTE
+%token CARACTER
+%token BOOLEANO
+%token VARIABLE
+%token STRING
+
+
 %token <numero> DIGITO
+
+
+
 %type <numero> run expresion termino res factor
 
 %%

@@ -11,8 +11,9 @@
 Digit  -?[0-9]{1}        
 Int    -?[0-9]{2,}
 Float  -?[0-9]+[.]{1}[0-9]+
-Char   .{1}
+Char   ["]{1}.{1}["]{1}
 String ["]{1}.{2,255}["]{1}
+Variable [A-Za-z]+
 
 ignora " "|\t|\n 
 Boolean "true"|"false"
@@ -28,49 +29,50 @@ boolean "boolean"
 const   "const"
 
 %%
-";"      { return findelinea; }
-{ignora}+   {}
-{digit}	   {printf ("Ingresaste digit\n"); }
-{int}      {printf ("Ingresaste int\n");}
-{float}    {printf ("Ingresaste float\n");}
-{char}	   {printf ("Ingresaste char\n");}
-{const}	   {printf ("Ingresaste constante\n");}
-{string}   {printf ("Ingresaste string\n");}
-{boolean}  {printf ("Ingresaste boolean\n");}
+";"        { return findelinea; }
+{ignora}+  {}
+{digit}	   {return  DEFDIGITO;}
+{int}      {return  DEFENTERO;}
+{float}    {return  DEFFLOTANTE;}
+{char}	   {return  DEFCHAR;}
+{const}	   {return  DEFCONSTANTE;}
+{string}   {return  DEFSTRING;}
+{boolean}  {return  DEFBOOLEANO;}
 
-"="        {printf("igual\n");}
-"!="       {printf("Diferente\n");}
-","        {printf("Coma\n");}
-"=="       {printf("Igual logico\n");}
-"."        {printf("Punto\n");}
-">="       {printf("Signo mayor-igual\n");}
-"<="       {printf("Signo menor-igual\n");}
-"("        {printf("parentesis apertura\n"); return PAR_ABRE;}
-")"        {printf("parentesis cierre\n"); return PAR_CIERRA;}
-">"        {printf("mayor\n");}
-"<"        {printf("menor\n");}
-"{"        {printf("llave de apertura\n");}
-"}"        {printf("llave de cierre\n");}
-"+"        {printf("mas\n"); return (OPSUMA);}
-"-"        {printf("menos\n"); return OPMENOS;}
-"*"        {printf("por\n"); return OPMULT;}
-"/"        {printf("dividir\n"); return OPDIV;}
-"&"        {printf("y logico\n");}
-"||"  	   {printf ("o logico\n");}
+"="        {return IGUAL;}
+"!="       {return DISTINTO;}
+","        {return COMA;}
+"=="       {return COMPIGUAL;}
+"."        {}
+">="       {return MAYORIGUAL;}
+"<="       {return MENORIGUAL;}
+"("        {return PAR_ABRE;}
+")"        {return PAR_CIERRA;}
+">"        {return MAYOR;}
+"<"        {return MENOR;}
+"{"        {return LLAVEABRE;}
+"}"        {return LLAVECIERRA;}
+"+"        {return OPSUMA;}
+"-"        {return OPMENOS;}
+"*"        {return OPMULT;}
+"/"        {return OPDIV;}
+"&"        {return AND;}
+"||"  	   {return OR;}
 
-"main"	   {printf("Inicio archivo programa\n");}
-"if"	   {printf("if condicion\n");}
-"else"	   {printf("else condicion\n");}
-"for"	   {printf("for iteracion\n");}
-"while"	   {printf("while condicion\n");}
+"main"	   {return MAIN;}
+"if"	   {return IF;}
+"else"	   {return ELSE;}
+"for"	   {return FOR;}
+"while"	   {return WHILE;}
 
 
-{Digit}    {printf ("Ingresaste Digit\n"); yylval.numero = atoi(yytext);  return (DIGITO);}
-{Int}      {printf ("Ingresaste Int\n"); }
-{Float}    {printf ("Ingresaste Float\n");}
-{Char}     {printf ("Ingresaste Char\n");}
-{Boolean}  {printf ("Ingresaste Booleano\n");}
-{String}   {printf ("Ingresaste String\n");}
+{Digit}    {yylval.numero = atoi(yytext);  return DIGITO;}
+{Int}      {return ENTERO;}
+{Float}    {return FLOTANTE;}
+{Boolean}  {return BOOLEANO;}
+{Variable} {return VARIABLE;}
+{Char}     {return CARACTER;}
+{String}   {return STRING;}
 
 
 .{256,}    {printf("error lexico %d \n",yylineno);} 
