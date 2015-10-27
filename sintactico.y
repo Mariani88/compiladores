@@ -14,6 +14,7 @@ char cadena;
 int numero;
 char variable[50];
 char tipo[10];
+float flotante;
 }
 
 %token findelinea
@@ -50,10 +51,6 @@ char tipo[10];
 %token ELSE
 %token FOR
 %token WHILE
-
-
-%token ENTERO
-%token FLOTANTE
 %token CARACTER
 %token BOOLEANO
 %token <variable>VARIABLE
@@ -61,7 +58,8 @@ char tipo[10];
 
 
 %token <numero> DIGITO
-
+%token <numero> ENTERO
+%token <flotante> FLOTANTE
 
 
 %type <numero> expresion termino factor
@@ -77,13 +75,13 @@ sentencia: declaracion| asignacion | expresion
 asignacion: VARIABLE IGUAL expresion 
 			| VARIABLE IGUAL VARIABLE 
 
-declaracion: DEFDIGITO       VARIABLE    {printf ("regla 1\n");}
-			|DEFENTERO       VARIABLE    {printf ("regla 2\n");}
-	      	|DEFFLOTANTE     VARIABLE    {printf ("regla 3\n");}
-	        |DEFCHAR         VARIABLE   {printf ("regla 4\n");}
-	        |DEFCONSTANTE    VARIABLE   {printf ("regla 5\n");}
-	        |DEFSTRING       VARIABLE    {printf ("regla 6\n");}
-	        |DEFBOOLEANO     VARIABLE    {printf ("regla 7\n");}
+declaracion: DEFDIGITO       VARIABLE    {}
+			|DEFENTERO       VARIABLE    {}
+	      	|DEFFLOTANTE     VARIABLE    {}
+	        |DEFCHAR         VARIABLE    {}
+	        |DEFCONSTANTE    VARIABLE    {}
+	        |DEFSTRING       VARIABLE    {}
+	        |DEFBOOLEANO     VARIABLE    {}
 	      	
 expresion: expresion OPSUMA termino { $$ = $1 + $3;}
 	   | expresion OPMENOS termino { $$ = $1 - $3;}
@@ -94,6 +92,8 @@ termino: termino OPMULT factor {$$ = $1*$3;}
 	 | factor  { $$ = $1;}
 
 factor: DIGITO {$$ = $1;}
+		|ENTERO   {$$ = $1;}
+		|FLOTANTE  {$$ = $1;}
 	| PAR_ABRE expresion PAR_CIERRA { $$ = $2;}
 
 

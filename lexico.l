@@ -67,8 +67,8 @@ const   "const"
 
 
 {Digit}    {yylval.numero = atoi(yytext);  return DIGITO;}
-{Int}      {return ENTERO;}
-{Float}    {return FLOTANTE;}
+{Int}      {yylval.numero = atoi(yytext);return ENTERO;}
+{Float}    {yylval.flotante = atof(yytext);return FLOTANTE;}
 {Boolean}  {return BOOLEANO;}
 {Variable} {return VARIABLE;}
 {Char}     {return CARACTER;}
