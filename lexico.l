@@ -13,7 +13,7 @@ Int    -?[0-9]{2,}
 Float  -?[0-9]+[.]{1}[0-9]+
 Char   ["]{1}.{1}["]{1}
 String ["]{1}.{2,255}["]{1}
-Variable [A-Za-z]+
+Variable [A-Za-z]{2,50}
 
 ignora " "|\t|\n 
 Boolean "true"|"false"
@@ -31,13 +31,13 @@ const   "const"
 %%
 ";"        { return findelinea; }
 {ignora}+  {}
-{digit}	   {return  DEFDIGITO;}
-{int}      {return  DEFENTERO;}
-{float}    {return  DEFFLOTANTE;}
-{char}	   {return  DEFCHAR;}
-{const}	   {return  DEFCONSTANTE;}
-{string}   {return  DEFSTRING;}
-{boolean}  {return  DEFBOOLEANO;}
+{digit}	   {strcpy (yylval.tipo, yytext); return  DEFDIGITO;}
+{int}      {strcpy (yylval.tipo, yytext);return  DEFENTERO;}
+{float}    {strcpy (yylval.tipo, yytext);return  DEFFLOTANTE;}
+{char}	   {strcpy (yylval.tipo, yytext);return  DEFCHAR;}
+{const}	   {strcpy (yylval.tipo, yytext);return  DEFCONSTANTE;}
+{string}   {strcpy (yylval.tipo, yytext);return  DEFSTRING;}
+{boolean}  {strcpy (yylval.tipo, yytext);return  DEFBOOLEANO;}
 
 "="        {return IGUAL;}
 "!="       {return DISTINTO;}

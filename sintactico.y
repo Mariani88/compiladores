@@ -8,21 +8,23 @@ int yylex();
 int yyerror(const char *p) { printf("error");}
 %}
 
+
 %union {
 char cadena;
 int numero;
-
+char variable[50];
+char tipo[10];
 }
 
 %token findelinea
 
-%token DEFDIGITO
-%token DEFENTERO
-%token DEFFLOTANTE
-%token DEFCHAR
-%token DEFCONSTANTE
-%token DEFSTRING
-%token DEFBOOLEANO
+%token <variable> DEFDIGITO
+%token <variable> DEFENTERO
+%token <variable> DEFFLOTANTE
+%token <variable> DEFCHAR
+%token <variable> DEFCONSTANTE
+%token <variable> DEFSTRING
+%token <variable> DEFBOOLEANO
 
 %token IGUAL
 %token DISTINTO
@@ -54,7 +56,7 @@ int numero;
 %token FLOTANTE
 %token CARACTER
 %token BOOLEANO
-%token VARIABLE
+%token <variable>VARIABLE
 %token STRING
 
 
@@ -62,26 +64,44 @@ int numero;
 
 
 
-%type <numero> run expresion termino res factor
+%type <numero> expresion termino factor
 
 %%
 
-run: res run | res 
+programa: MAIN LLAVEABRE cuerpo LLAVECIERRA;
 
-res: expresion findelinea    {printf ("resultado: %d\n", $1);}
+cuerpo: sentencia findelinea cuerpo | sentencia findelinea
 
-expresion: expresion OPSUMA termino { $$ = $1 + $3; printf ("regla1\n");}
-	   | expresion OPMENOS termino { $$ = $1 - $3;printf ("regla2\n");}
-	   | termino  { $$ = $1;printf ("regla3\n");}
+sentencia: declaracion| asignacion | expresion
 
-termino: termino OPMULT factor {$$ = $1*$3;printf ("regla4\n");}
-	 | termino OPDIV factor {$$ = $1/$3;printf ("regla5\n");}
-	 | factor  { $$ = $1;printf ("regla6\n");}
+asignacion: VARIABLE IGUAL expresion 
+			| VARIABLE IGUAL VARIABLE 
 
-factor: DIGITO {$$ = $1;printf ("regla7\n");}
-	| PAR_ABRE expresion PAR_CIERRA { $$ = $2;printf ("regla8\n");}
+declaracion: DEFDIGITO       VARIABLE    {printf ("regla 1\n");}
+			|DEFENTERO       VARIABLE    {printf ("regla 2\n");}
+	      	|DEFFLOTANTE     VARIABLE    {printf ("regla 3\n");}
+	        |DEFCHAR         VARIABLE   {printf ("regla 4\n");}
+	        |DEFCONSTANTE    VARIABLE   {printf ("regla 5\n");}
+	        |DEFSTRING       VARIABLE    {printf ("regla 6\n");}
+	        |DEFBOOLEANO     VARIABLE    {printf ("regla 7\n");}
+	      	
+expresion: expresion OPSUMA termino { $$ = $1 + $3;}
+	   | expresion OPMENOS termino { $$ = $1 - $3;}
+	   | termino  { $$ = $1;}
 
-  	  
+termino: termino OPMULT factor {$$ = $1*$3;}
+	 | termino OPDIV factor {$$ = $1/$3;}
+	 | factor  { $$ = $1;}
+
+factor: DIGITO {$$ = $1;}
+	| PAR_ABRE expresion PAR_CIERRA { $$ = $2;}
+
+
+
+
+
+
+	  
 %%
 
 int main (){
