@@ -12,8 +12,8 @@ Digit  -?[0-9]{1}
 Int    -?[0-9]{2,}
 Float  -?[0-9]+[.]{1}[0-9]+
 Char   ["]{1}.{1}["]{1}
-String ["]{1}.{2,255}["]{1}
-Variable [A-Za-z]{2,50}
+String ["]{1}.{1,255}["]{1}
+Variable [A-Za-z]{1,50}
 
 ignora " "|\t|\n 
 Boolean "true"|"false"
@@ -70,7 +70,7 @@ const   "const"
 {Int}      {yylval.numero = atoi(yytext);return ENTERO;}
 {Float}    {yylval.flotante = atof(yytext);return FLOTANTE;}
 {Boolean}  {return BOOLEANO;}
-{Variable} {return VARIABLE;}
+{Variable} {strcpy (yylval.variable, yytext); return VARIABLE;}
 {Char}     {return CARACTER;}
 {String}   {return STRING;}
 

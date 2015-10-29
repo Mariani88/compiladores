@@ -2,10 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include "tabla.c"
 
 //-- Lexer prototype required by bison, aka getNextToken()
 int yylex(); 
-int yyerror(const char *p) { printf("error");}
+int yyerror(const char *p) { printf("error sintactico\n");}
 %}
 
 
@@ -19,13 +20,13 @@ float flotante;
 
 %token findelinea
 
-%token <variable> DEFDIGITO
-%token <variable> DEFENTERO
-%token <variable> DEFFLOTANTE
-%token <variable> DEFCHAR
-%token <variable> DEFCONSTANTE
-%token <variable> DEFSTRING
-%token <variable> DEFBOOLEANO
+%token <tipo> DEFDIGITO
+%token <tipo> DEFENTERO
+%token <tipo> DEFFLOTANTE
+%token <tipo> DEFCHAR
+%token <tipo> DEFCONSTANTE
+%token <tipo> DEFSTRING
+%token <tipo> DEFBOOLEANO
 
 %token IGUAL
 %token DISTINTO
@@ -75,13 +76,13 @@ sentencia: declaracion| asignacion | expresion
 asignacion: VARIABLE IGUAL expresion 
 			| VARIABLE IGUAL VARIABLE 
 
-declaracion: DEFDIGITO       VARIABLE    {}
-			|DEFENTERO       VARIABLE    {}
-	      	|DEFFLOTANTE     VARIABLE    {}
-	        |DEFCHAR         VARIABLE    {}
-	        |DEFCONSTANTE    VARIABLE    {}
-	        |DEFSTRING       VARIABLE    {}
-	        |DEFBOOLEANO     VARIABLE    {}
+declaracion: DEFDIGITO       VARIABLE    {agregar (  $1, $2);}
+			|DEFENTERO       VARIABLE    {agregar (  $1, $2);}
+	      	|DEFFLOTANTE     VARIABLE    {agregar (  $1, $2);}
+	        |DEFCHAR         VARIABLE    {agregar (  $1, $2);}
+	        |DEFCONSTANTE    VARIABLE    {agregar (  $1, $2);}
+	        |DEFSTRING       VARIABLE    {agregar (  $1, $2);}
+	        |DEFBOOLEANO     VARIABLE    {agregar (  $1, $2);}
 	      	
 expresion: expresion OPSUMA termino { $$ = $1 + $3;}
 	   | expresion OPMENOS termino { $$ = $1 - $3;}
@@ -107,6 +108,7 @@ factor: DIGITO {$$ = $1;}
 int main (){
 	
 	yyparse ();
+	imprimirTabla();
 	return 0;
 
 }
