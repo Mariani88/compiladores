@@ -4,6 +4,7 @@
 
 %{
 #include "sintactico.tab.h"
+#include <string.h>
 %}
 
 /*definicion de tipos*/
@@ -29,7 +30,7 @@ boolean "boolean"
 const   "const"
 
 %%
-";"        { return findelinea; }
+";"        { return FINDELINEA; }
 {ignora}+  {}
 {digit}	   {strcpy (yylval.tipo, yytext); return  DEFDIGITO;}
 {int}      {strcpy (yylval.tipo, yytext);return  DEFENTERO;}

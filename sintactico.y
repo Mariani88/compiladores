@@ -6,19 +6,19 @@
 
 //-- Lexer prototype required by bison, aka getNextToken()
 int yylex(); 
-int yyerror(const char *p) { printf("error sintactico\n");}
+int yyerror(const char *mensaje) { printf("Error sintactico: %s\n",mensaje);}
 %}
 
 
 %union {
-char cadena;
-int numero;
-char variable[50];
-char tipo[10];
-float flotante;
+    char cadena;
+    int numero;
+    char variable[50];
+    char tipo[10];
+    float flotante;
 }
 
-%token findelinea
+%token FINDELINEA
 
 %token <tipo> DEFDIGITO
 %token <tipo> DEFENTERO
@@ -69,20 +69,20 @@ float flotante;
 
 programa: MAIN LLAVEABRE cuerpo LLAVECIERRA;
 
-cuerpo: sentencia findelinea cuerpo | sentencia findelinea
+cuerpo: sentencia FINDELINEA cuerpo | sentencia FINDELINEA
 
 sentencia: declaracion| asignacion | expresion
 
-asignacion: VARIABLE IGUAL expresion 
-			| VARIABLE IGUAL VARIABLE 
+asignacion: VARIABLE IGUAL expresion {if(!existe($1)){yyerror("Variable no definida.");}}
+			| VARIABLE IGUAL VARIABLE {if(!existe($1)|| !existe($3)){yyerror("Variable no definida.");}}
 
-declaracion: DEFDIGITO       VARIABLE    {agregar (  $1, $2);}
-			|DEFENTERO       VARIABLE    {agregar (  $1, $2);}
-	      	|DEFFLOTANTE     VARIABLE    {agregar (  $1, $2);}
-	        |DEFCHAR         VARIABLE    {agregar (  $1, $2);}
-	        |DEFCONSTANTE    VARIABLE    {agregar (  $1, $2);}
-	        |DEFSTRING       VARIABLE    {agregar (  $1, $2);}
-	        |DEFBOOLEANO     VARIABLE    {agregar (  $1, $2);}
+declaracion: DEFDIGITO       VARIABLE    {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
+			|DEFENTERO       VARIABLE    {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
+	      	|DEFFLOTANTE     VARIABLE    {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
+	        |DEFCHAR         VARIABLE    {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
+	        |DEFCONSTANTE    VARIABLE    {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
+	        |DEFSTRING       VARIABLE    {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
+	        |DEFBOOLEANO     VARIABLE    {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
 	      	
 expresion: expresion OPSUMA termino { $$ = $1 + $3;}
 	   | expresion OPMENOS termino { $$ = $1 - $3;}
@@ -95,7 +95,7 @@ termino: termino OPMULT factor {$$ = $1*$3;}
 factor: DIGITO {$$ = $1;}
 		|ENTERO   {$$ = $1;}
 		|FLOTANTE  {$$ = $1;}
-	| PAR_ABRE expresion PAR_CIERRA { $$ = $2;}
+        |PAR_ABRE expresion PAR_CIERRA { $$ = $2;}
 
 
 
