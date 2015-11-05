@@ -76,8 +76,8 @@ sentencia: declaracion| asignacion | expresion
 asignacion: VARIABLE IGUAL expresion {if(!existe($1)){yyerror("Variable no definida.");}}
 			| VARIABLE IGUAL VARIABLE {if(!existe($1)|| !existe($3)){yyerror("Variable no definida.");}}
 
-declaracion: DEFDIGITO       VARIABLE    {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
-			|DEFENTERO       VARIABLE    {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
+declaracion: 	 DEFDIGITO       VARIABLE    {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
+		|DEFENTERO       VARIABLE    {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
 	      	|DEFFLOTANTE     VARIABLE    {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
 	        |DEFCHAR         VARIABLE    {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
 	        |DEFCONSTANTE    VARIABLE    {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
