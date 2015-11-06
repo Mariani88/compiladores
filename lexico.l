@@ -9,8 +9,7 @@
 
 /*definicion de tipos*/
 
-Digit  -?[0-9]{1}        
-Int    -?[0-9]{2,}
+Int    -?[0-9]{1,}
 Float  -?[0-9]+[.]{1}[0-9]+
 Char   ["]{1}.{1}["]{1}
 String ["]{1}.{1,255}["]{1}
@@ -21,7 +20,6 @@ Boolean "true"|"false"
 
 /*definicion de palabras reservadas*/
 
-digit	"digit"
 int     "int"
 float   "float"
 char	"char"
@@ -32,7 +30,6 @@ const   "const"
 %%
 ";"        { return FINDELINEA; }
 {ignora}+  {}
-{digit}	   {strcpy (yylval.tipo, yytext); return  DEFDIGITO;}
 {int}      {strcpy (yylval.tipo, yytext);return  DEFENTERO;}
 {float}    {strcpy (yylval.tipo, yytext);return  DEFFLOTANTE;}
 {char}	   {strcpy (yylval.tipo, yytext);return  DEFCHAR;}
@@ -67,7 +64,6 @@ const   "const"
 "while"	   {return WHILE;}
 
 
-{Digit}    {yylval.numero = atoi(yytext);  return DIGITO;}
 {Int}      {yylval.numero = atoi(yytext);return ENTERO;}
 {Float}    {yylval.flotante = atof(yytext);return FLOTANTE;}
 {Boolean}  {return BOOLEANO;}

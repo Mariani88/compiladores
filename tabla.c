@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "sintactico.tab.h"
+
+extern int yyerror(const char *mensaje);
 
 typedef char t_simbolo[50];
 
@@ -12,7 +15,7 @@ int esTipoNumero (t_simbolo tipo){
 
     int esNumero = 0;
 
-    if (  (strcmp (tipo, "float") == 0) | (strcmp (tipo, "digit")== 0) | (strcmp (tipo, "int") == 0)  ){
+    if (  (strcmp (tipo, "float") == 0) || (strcmp (tipo, "int") == 0)  ){
 
         esNumero = 1;
     }
@@ -117,3 +120,82 @@ int sonDelMismoTipo (t_simbolo variableIngresada, t_simbolo variableIngresada2){
 
     return mismoTipo;
 }
+
+//Metodos agregados
+void comprobarCaracter(t_simbolo variable){
+    t_simbolo tipo;
+    tipoDe(variable,tipo);
+    int esChar = 0;
+    esChar =(strcmp (tipo, "char") == 0);
+    if(!esChar){
+       yyerror("La variable debe ser de tipo char");
+    }
+}
+
+void comprobarFlotante(t_simbolo variable){
+    t_simbolo tipo;
+    tipoDe(variable,tipo);
+    int esFlotante = 0;
+    esFlotante =(strcmp (tipo, "float") == 0);
+    if(!esFlotante){
+       yyerror("La variable debe ser de tipo float");
+    }
+}
+
+void comprobarEntero(t_simbolo variable){
+    t_simbolo tipo;
+    tipoDe(variable,tipo);
+    int esEntero = 0;
+    esEntero =(strcmp (tipo, "int") == 0);
+    if(!esEntero){
+       yyerror("La variable debe ser de tipo int");
+    }
+}
+
+
+void comprobarString(t_simbolo variable){
+    t_simbolo tipo;
+    tipoDe(variable, tipo);
+    if(strcmp (tipo, "string") != 0){
+        yyerror("La variable debe ser del tipo string.");
+    }
+}
+
+void comprobarBoolean(t_simbolo variable){
+    t_simbolo tipo;
+    tipoDe(variable, tipo);
+    if(strcmp (tipo, "boolean") != 0){
+        yyerror("La variable debe ser del tipo boolean.");
+    }    
+}
+
+void comprobarExistencia(t_simbolo variable){
+    if(!existe(variable)){
+        yyerror("Variable no definida.");
+        }
+}
+
+void compararTipos(t_simbolo a,t_simbolo b){
+    if(!sonDelMismoTipo(a,b)){
+        yyerror("Tipos incompatibles");
+    }    
+}
+
+int esFloat(t_simbolo a){
+    int esFlotante = 0;
+    t_simbolo tipo;
+    tipoDe(a,tipo);
+    esFlotante = (strcmp(tipo,"float")!=0);
+    return esFlotante;
+}
+
+void comprobarVariasVariables(t_simbolo a, t_simbolo b ,t_simbolo c){
+    t_simbolo tipo;
+    if(!sonNumeros(a, b) || !sonNumeros(b,c)){
+        yyerror("Esta operacion solo se puede aplicar a tipos de datos numericos.");
+    }
+    else if((!sonDelMismoTipo(a, b) || (!sonDelMismoTipo(b, c)))&& !esFloat(a)){
+        yyerror("La variable a la cual asignar debe ser del tipo float.");
+    }
+}    
+
