@@ -32,14 +32,12 @@ void agregar ( t_simbolo tipoIngresado , t_simbolo variableIngresada){
 
 int existe (t_simbolo variableIngresada){
 
-    int existe = 10;
+    int existe = 0;
     int filaEscaneada = 0;
 
-    while ( filaEscaneada < fila && existe != 1){
+    while ( filaEscaneada < fila && !existe){
 
-        if (strcmp (tablaDeSimbolos[filaEscaneada][1], variableIngresada ) == 0){
-            existe = 1;
-        }
+        existe = strcmp (tablaDeSimbolos[filaEscaneada][1], variableIngresada ) == 0;
         filaEscaneada++;
     }
 
