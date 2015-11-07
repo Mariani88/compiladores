@@ -74,30 +74,30 @@ int yyerror(const char *mensaje) { printf("Error sintactico: %s\n",mensaje);}
 
 programa: MAIN LLAVEABRE cuerpo LLAVECIERRA;
 
-cuerpo: sentencia FINDELINEA cuerpo | sentencia FINDELINEA
+cuerpo: sentencia cuerpo | sentencia
 
-sentencia: declaracion| asignacion | expresionFloat | expresionEntera | sumaMixta | restaMixta
+sentencia: declaracion| asignacion | expresionFloat | expresionEntera | sumaMixta | restaMixta | sentencia_if
 
 operacion: OPSUMA
            | OPMENOS
            | OPMULT
            | OPDIV
 
-asignacion: VARIABLE IGUAL expresionFloat {comprobarExistencia($1);comprobarFlotante($1);}
-            | VARIABLE IGUAL expresionMixta {comprobarExistencia($1);comprobarFlotante($1);}
-            | VARIABLE IGUAL expresionEntera  {comprobarExistencia($1);comprobarEntero($1);}
-            | VARIABLE IGUAL VARIABLE {if(!existe($1)|| !existe($3)){yyerror("Variable no definida.");}compararTipos($1,$3);}
-            | VARIABLE IGUAL VARIABLE operacion VARIABLE {if(!existe($1)|| !existe($3)|| !existe($5)){yyerror("Variable no definida.");}compararTipos($1,$3);compararTipos($1,$5);comprobarVariasVariables($1,$3,$5);}
-            | VARIABLE IGUAL CARACTER {comprobarExistencia($1);comprobarCaracter($1);}
-            | VARIABLE IGUAL STRING   {comprobarExistencia($1);comprobarString($1);}
-            | VARIABLE IGUAL BOOLEANO {comprobarExistencia($1);comprobarBoolean($1);}
+asignacion: VARIABLE IGUAL expresionFloat FINDELINEA {comprobarExistencia($1);comprobarFlotante($1);}
+            | VARIABLE IGUAL expresionMixta FINDELINEA{comprobarExistencia($1);comprobarFlotante($1);}
+            | VARIABLE IGUAL expresionEntera FINDELINEA{comprobarExistencia($1);comprobarEntero($1);}
+            | VARIABLE IGUAL VARIABLE FINDELINEA {if(!existe($1)|| !existe($3)){yyerror("Variable no definida.");}compararTipos($1,$3);}
+            | VARIABLE IGUAL VARIABLE operacion VARIABLE FINDELINEA {if(!existe($1)|| !existe($3)|| !existe($5)){yyerror("Variable no definida.");}compararTipos($1,$3);compararTipos($1,$5);comprobarVariasVariables($1,$3,$5);}
+            | VARIABLE IGUAL CARACTER FINDELINEA {comprobarExistencia($1);comprobarCaracter($1);}
+            | VARIABLE IGUAL STRING   FINDELINEA {comprobarExistencia($1);comprobarString($1);}
+            | VARIABLE IGUAL BOOLEANO FINDELINEA {comprobarExistencia($1);comprobarBoolean($1);}
 
-declaracion: DEFENTERO        VARIABLE    {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
-             |DEFFLOTANTE     VARIABLE    {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
-             |DEFCHAR         VARIABLE    {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
-             |DEFCONSTANTE    VARIABLE    {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
-             |DEFSTRING       VARIABLE    {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
-             |DEFBOOLEANO     VARIABLE    {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
+declaracion: DEFENTERO        VARIABLE  FINDELINEA  {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
+             |DEFFLOTANTE     VARIABLE  FINDELINEA  {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
+             |DEFCHAR         VARIABLE  FINDELINEA  {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
+             |DEFCONSTANTE    VARIABLE  FINDELINEA  {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
+             |DEFSTRING       VARIABLE   FINDELINEA {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
+             |DEFBOOLEANO     VARIABLE   FINDELINEA {if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}}
                         
 expresionFloat: expresionFloat OPSUMA termino { $$ = $1 + $3;}
        | expresionFloat OPMENOS termino { $$ = $1 - $3;}
@@ -138,7 +138,48 @@ terminoEntero: terminoEntero OPMULT factorEntero {$$ = $1*$3;}
 
 factorEntero: ENTERO{$$ = $1;}
               |PAR_ABRE expresionEntera PAR_CIERRA { $$ = $2;}    
-        
+ 
+sentencia_if:   IF PAR_ABRE condicion PAR_CIERRA LLAVEABRE sentencia LLAVECIERRA
+                | IF PAR_ABRE condicion PAR_CIERRA LLAVEABRE sentencia LLAVECIERRA ELSE LLAVEABRE sentencia LLAVECIERRA
+                
+expresion: expresionEntera
+           | expresionFloat
+           | expresionMixta
+
+condicion:      expresion AND expresion
+                | expresion OR expresion
+                | expresion DISTINTO expresion
+                | expresion COMPIGUAL expresion
+                | expresion MAYOR expresion
+                | expresion MENOR expresion
+                | expresion MAYORIGUAL expresion
+                | expresion MENORIGUAL expresion
+                | expresion AND VARIABLE
+                | expresion OR VARIABLE
+                | expresion DISTINTO VARIABLE
+                | expresion COMPIGUAL VARIABLE
+                | expresion MAYOR VARIABLE
+                | expresion MENOR VARIABLE
+                | expresion MAYORIGUAL VARIABLE
+                | expresion MENORIGUAL VARIABLE
+                | VARIABLE AND expresion
+                | VARIABLE OR expresion
+                | VARIABLE DISTINTO expresion
+                | VARIABLE COMPIGUAL expresion
+                | VARIABLE MAYOR expresion
+                | VARIABLE MENOR expresion
+                | VARIABLE MAYORIGUAL expresion
+                | VARIABLE MENORIGUAL expresion
+                | VARIABLE AND VARIABLE
+                | VARIABLE OR VARIABLE
+                | VARIABLE DISTINTO VARIABLE
+                | VARIABLE COMPIGUAL VARIABLE
+                | VARIABLE MAYOR VARIABLE
+                | VARIABLE MENOR VARIABLE
+                | VARIABLE MAYORIGUAL VARIABLE
+                | VARIABLE MENORIGUAL VARIABLE              
+                ;
+                
 %%
 
 int main (){
