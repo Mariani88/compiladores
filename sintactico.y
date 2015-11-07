@@ -76,7 +76,7 @@ programa: MAIN LLAVEABRE cuerpo LLAVECIERRA;
 
 cuerpo: sentencia cuerpo | sentencia
 
-sentencia: declaracion| asignacion | expresionFloat | expresionEntera | sumaMixta | restaMixta | sentencia_if
+sentencia: declaracion| asignacion | expresionFloat | expresionEntera | sumaMixta | restaMixta | sentencia_if | sentencia_while
 
 operacion: OPSUMA
            | OPMENOS
@@ -139,8 +139,11 @@ terminoEntero: terminoEntero OPMULT factorEntero {$$ = $1*$3;}
 factorEntero: ENTERO{$$ = $1;}
               |PAR_ABRE expresionEntera PAR_CIERRA { $$ = $2;}    
  
-sentencia_if:   IF PAR_ABRE condicion PAR_CIERRA LLAVEABRE sentencia LLAVECIERRA
-                | IF PAR_ABRE condicion PAR_CIERRA LLAVEABRE sentencia LLAVECIERRA ELSE LLAVEABRE sentencia LLAVECIERRA
+sentencia_if:   IF PAR_ABRE condicion PAR_CIERRA LLAVEABRE cuerpo LLAVECIERRA
+                | IF PAR_ABRE condicion PAR_CIERRA LLAVEABRE cuerpo LLAVECIERRA ELSE LLAVEABRE cuerpo LLAVECIERRA
+                
+sentencia_while:
+                 WHILE PAR_ABRE condicion PAR_CIERRA LLAVEABRE cuerpo LLAVECIERRA
                 
 expresion: expresionEntera
            | expresionFloat
