@@ -56,6 +56,7 @@ const   "const"
 "/"        {return OPDIV;}
 "&"        {return AND;}
 "||"  	   {return OR;}
+"!"  	   {return NOT;}
 
 "main"	   {return MAIN;}
 "if"	   {return IF;}

@@ -4,100 +4,16 @@
 #include <math.h>
 #include <string.h>
 #include "tabla.c"
+#include "arbol.c"
+
 
 //Usado solo para revision de errores
 #define YYDEBUG 1
-
-#define HOJAENTERO 1
-#define FACTOR 2
-#define TERMINO 3
-#define EXPRESIONFLOAT 4
-#define DECLARACION 5
-#define ASIGNACION 6
-#define SUMAMIXTA 7
-#define RESTAMIXTA 8
-#define MULTIPLICACIONMIXTA 9
-#define FACTORENTERO 10
-#define TERMINOENTERO 11
-#define EXPRESIONENTERA 12
-#define EXPRESION 13
-#define CONDICION 14
-#define SENTENCIAIF 15
-#define SENTENCIAWHILE 16
-#define SENTENCIA 17
-#define CUERPO 18
-#define MAIN 19
-#define HOJAVARIABLE 20
-#define HOJAFLOTANTE 21
-#define HOJASTRING 22
-#define DIVISIONMIXTA 23
 
 
 //-- Lexer prototype required by bison, aka getNextToken()
 int yylex(); 
 int yyerror(const char *mensaje) { printf("Error sintactico: %s\n",mensaje);}
-
-typedef struct ast_node{
-  char* operador;
-  char* variable;
-  int tipoNodo;
-  int valorEntero;
-  float valorFlotante;
-  char* valorString;
-  struct ast_node* central;  
-  struct ast_node* left; 
-  struct ast_node* right;
-
-}ast_node;
-
-struct ast_node* nuevo_nodo_expresion(int tipoNodo,char* operador, struct ast_node* right, struct ast_node* left){
-    struct ast_node* nuevoNodo = (struct ast_node*) malloc(sizeof(struct ast_node));
-    nuevoNodo->operador = (char*)malloc(sizeof(char)*2);
-    strcpy(nuevoNodo->operador, operador);
-    nuevoNodo->tipoNodo = tipoNodo;
-    nuevoNodo->central = 0;
-    nuevoNodo->right = right;
-    nuevoNodo->left = left;
-    return nuevoNodo;
-}
-
-struct ast_node* nuevo_nodo_if(struct ast_node* condicion,struct ast_node* central, struct ast_node* right){
-    struct ast_node* nuevoNodo = (struct ast_node*) malloc(sizeof(struct ast_node));
-    nuevoNodo->operador = 0;
-    nuevoNodo->tipoNodo = IF;
-    nuevoNodo->central = central ;
-    nuevoNodo->right = right;
-    nuevoNodo->left = condicion;
-    return nuevoNodo;
-}
-
-struct ast_node* nuevo_nodo_entero(int valor){
-    struct ast_node* nuevoNodo = (struct ast_node*) malloc(sizeof(struct ast_node));
-    nuevoNodo->tipoNodo = HOJAENTERO;
-    nuevoNodo->valorEntero = valor;
-    nuevoNodo->right = 0;
-    nuevoNodo->left = 0;
-    return nuevoNodo;
-}
-
-struct ast_node* nuevo_nodo_variable(char* variable){
-    struct ast_node* nuevoNodo = (struct ast_node*) malloc(sizeof(struct ast_node));
-    nuevoNodo->tipoNodo = HOJAVARIABLE;
-    nuevoNodo->variable = (char*)malloc(sizeof(char)*50);
-    strcpy(nuevoNodo->variable, variable);
-    nuevoNodo->right = 0;
-    nuevoNodo->left = 0;
-    return nuevoNodo;
-}
-
-struct ast_node* nuevo_nodo_flotante(float valor){
-    struct ast_node* nuevoNodo = (struct ast_node*) malloc(sizeof(struct ast_node));
-    nuevoNodo->tipoNodo = HOJAFLOTANTE;
-    nuevoNodo->valorFlotante = valor;
-    nuevoNodo->right = 0;
-    nuevoNodo->left = 0;
-    return nuevoNodo;
-}
 
 %}
 
@@ -138,7 +54,7 @@ struct ast_node* nuevo_nodo_flotante(float valor){
 %token OPDIV
 %token AND
 %token OR
-
+%token NOT
 
 %token MAIN
 %token IF
@@ -146,7 +62,7 @@ struct ast_node* nuevo_nodo_flotante(float valor){
 %token FOR
 %token WHILE
 %token <variable>CARACTER
-%token BOOLEANO
+%token <variable>BOOLEANO
 %token <variable>VARIABLE
 %token <variable>STRING
 
@@ -156,15 +72,32 @@ struct ast_node* nuevo_nodo_flotante(float valor){
 
 %type <ast> asignacion expresion expresionFloat termino factor sumaMixta restaMixta multiplicacionMixta divisionMixta expresionMixta
  
-%type <ast> expresionEntera declaracion sentencia sentencia_if cuerpo sentencia_while condicion terminoEntero factorEntero
+%type <ast> programa expresionEntera declaracion sentencia sentencia_if cuerpo sentencia_while condicion terminoEntero factorEntero
 
 %%
 
-programa: MAIN LLAVEABRE cuerpo LLAVECIERRA;
+programa: MAIN LLAVEABRE cuerpo LLAVECIERRA {   
+                                                $3->tipoNodo = MAIN;
+                                                $$ = $3;
+                                                mostrarArbol($3);
+                                                //comprobarArbol($3);
+                                             }
 
-cuerpo: sentencia cuerpo | sentencia
+cuerpo: sentencia cuerpo {
+                            $$ = nuevo_nodo_expresion(CUERPO,"",$1,$2);} 
+                        
+        | sentencia {
+                        $$ = $1;
+                    }
 
-sentencia: declaracion| asignacion | expresionFloat | expresionEntera | sumaMixta | restaMixta | sentencia_if | sentencia_while
+sentencia: declaracion {$$ = $1;}
+           | asignacion {$$ = $1;}
+           | expresionFloat {$$ = $1;}
+           | expresionEntera {$$ = $1;}
+           | sumaMixta {$$ = $1;}
+           | restaMixta {$$ = $1;}
+           | sentencia_if  {$$ = $1;}
+           | sentencia_while {$$ = $1;}
 
 asignacion: VARIABLE IGUAL expresionFloat FINDELINEA {  
                                                         comprobarExistencia($1);
@@ -203,11 +136,69 @@ asignacion: VARIABLE IGUAL expresionFloat FINDELINEA {
                                                                        ast_node* v_dos = nuevo_nodo_variable($3);
                                                                        ast_node* v_tres = nuevo_nodo_variable($5);
                                                                        ast_node* suma = nuevo_nodo_expresion(EXPRESION,"+",v_dos,v_tres);
-                                                                       $$ = nuevo_nodo_expresion(ASIGNACION,"",hoja_variable,suma);
+                                                                       $$ = nuevo_nodo_expresion(ASIGNACION,"=",hoja_variable,suma);
                                                                     }
-            | VARIABLE IGUAL CARACTER FINDELINEA {comprobarExistencia($1);comprobarCaracter($1);}
-            | VARIABLE IGUAL STRING   FINDELINEA {comprobarExistencia($1);comprobarString($1);}
-            | VARIABLE IGUAL BOOLEANO FINDELINEA {comprobarExistencia($1);comprobarBoolean($1);}
+            | VARIABLE IGUAL VARIABLE OPMENOS VARIABLE FINDELINEA {
+                                                                       if(!existe($1)||!existe($3)||!existe($5)){
+                                                                            yyerror("Variable no definida.");
+                                                                       }
+                                                                       compararTipos($1,$3);
+                                                                       compararTipos($1,$5);
+                                                                       comprobarVariasVariables($1,$3,$5);
+                                                                       ast_node* hoja_variable = nuevo_nodo_variable($1);
+                                                                       ast_node* v_dos = nuevo_nodo_variable($3);
+                                                                       ast_node* v_tres = nuevo_nodo_variable($5);
+                                                                       ast_node* resta = nuevo_nodo_expresion(EXPRESION,"-",v_dos,v_tres);
+                                                                       $$ = nuevo_nodo_expresion(ASIGNACION,"=",hoja_variable,resta);
+                                                                    } 
+            | VARIABLE IGUAL VARIABLE OPMULT VARIABLE FINDELINEA {
+                                                                       if(!existe($1)||!existe($3)||!existe($5)){
+                                                                            yyerror("Variable no definida.");
+                                                                       }
+                                                                       compararTipos($1,$3);
+                                                                       compararTipos($1,$5);
+                                                                       comprobarVariasVariables($1,$3,$5);
+                                                                       ast_node* hoja_variable = nuevo_nodo_variable($1);
+                                                                       ast_node* v_dos = nuevo_nodo_variable($3);
+                                                                       ast_node* v_tres = nuevo_nodo_variable($5);
+                                                                       ast_node* multiplicacion = nuevo_nodo_expresion(EXPRESION,"*",v_dos,v_tres);
+                                                                       $$ = nuevo_nodo_expresion(ASIGNACION,"=",hoja_variable,multiplicacion);
+                                                                    }  
+            | VARIABLE IGUAL VARIABLE OPDIV VARIABLE FINDELINEA {
+                                                                       if(!existe($1)||!existe($3)||!existe($5)){
+                                                                            yyerror("Variable no definida.");
+                                                                       }
+                                                                       compararTipos($1,$3);
+                                                                       compararTipos($1,$5);
+                                                                       comprobarVariasVariables($1,$3,$5);
+                                                                       ast_node* hoja_variable = nuevo_nodo_variable($1);
+                                                                       ast_node* v_dos = nuevo_nodo_variable($3);
+                                                                       ast_node* v_tres = nuevo_nodo_variable($5);
+                                                                       ast_node* division = nuevo_nodo_expresion(EXPRESION,"/",v_dos,v_tres);
+                                                                       $$ = nuevo_nodo_expresion(ASIGNACION,"=",hoja_variable,division);
+                                                                    }                                                        
+            | VARIABLE IGUAL CARACTER FINDELINEA {  
+                                                    comprobarExistencia($1);
+                                                    comprobarCaracter($1);
+                                                    ast_node* hoja_variable = nuevo_nodo_variable($1);
+                                                    ast_node* nodo_caracter = nuevo_nodo_caracter($3);
+                                                    $$ = nuevo_nodo_expresion(ASIGNACION,"=",hoja_variable,nodo_caracter);
+                                                 
+                                                 }
+            | VARIABLE IGUAL STRING FINDELINEA {  
+                                                  comprobarExistencia($1);
+                                                  comprobarString($1);
+                                                  ast_node* hoja_variable = nuevo_nodo_variable($1);
+                                                  ast_node* nodo_string = nuevo_nodo_string($3);
+                                                  $$ = nuevo_nodo_expresion(ASIGNACION,"=",hoja_variable,nodo_string);
+                                               }
+            | VARIABLE IGUAL BOOLEANO FINDELINEA {
+                                                    comprobarExistencia($1);
+                                                    comprobarBoolean($1);
+                                                    ast_node* hoja_variable = nuevo_nodo_variable($1);
+                                                    ast_node* nodo_boolean = nuevo_nodo_boolean($3);
+                                                    $$ = nuevo_nodo_expresion(ASIGNACION,"=",hoja_variable,nodo_boolean);
+                                                 }
 
             
 declaracion: DEFENTERO  VARIABLE  FINDELINEA  {   
@@ -271,7 +262,7 @@ factor: FLOTANTE {$$ = nuevo_nodo_flotante($1);}
         | PAR_ABRE expresionFloat PAR_CIERRA { 
                                               struct ast_node* vacio = 0;
                                               $$ = nuevo_nodo_expresion(FACTOR ,"+", vacio , $2);
-                                            }
+                                             }
 
 expresionEntera: expresionEntera OPSUMA terminoEntero {$$ = nuevo_nodo_expresion(EXPRESIONENTERA,"+",$1,$3);}
                 | expresionEntera OPMENOS terminoEntero { $$ = nuevo_nodo_expresion(EXPRESIONENTERA,"-",$1,$3);}
@@ -282,9 +273,9 @@ terminoEntero: terminoEntero OPMULT factorEntero {$$ = nuevo_nodo_expresion(TERM
      | factorEntero  { $$ = $1;} 
 
 factorEntero: ENTERO{$$ = nuevo_nodo_entero($1);}
-              |PAR_ABRE expresionEntera PAR_CIERRA { $$ = nuevo_nodo_expresion(FACTORENTERO," ",0,$2);}    
+              |PAR_ABRE expresionEntera PAR_CIERRA { $$ = $2;}    
  
-sentencia_if:   IF PAR_ABRE condicion PAR_CIERRA LLAVEABRE cuerpo LLAVECIERRA {$$ = nuevo_nodo_expresion(IF,"",$3,$6);}
+sentencia_if:   IF PAR_ABRE condicion PAR_CIERRA LLAVEABRE cuerpo LLAVECIERRA {$$ = nuevo_nodo_expresion(SENTENCIAIF,"",$3,$6);}
                 | IF PAR_ABRE condicion PAR_CIERRA LLAVEABRE cuerpo LLAVECIERRA ELSE LLAVEABRE cuerpo LLAVECIERRA {
                         $$ = nuevo_nodo_if($3,$6,$10);
                 }
@@ -292,9 +283,9 @@ sentencia_if:   IF PAR_ABRE condicion PAR_CIERRA LLAVEABRE cuerpo LLAVECIERRA {$
 sentencia_while:
                  WHILE PAR_ABRE condicion PAR_CIERRA LLAVEABRE cuerpo LLAVECIERRA {$$ = nuevo_nodo_expresion(WHILE,"",$3,$6);}
                 
-expresion: expresionEntera {$$ = nuevo_nodo_expresion(EXPRESION," ",0,$1);}
-           | expresionFloat {$$ = nuevo_nodo_expresion(EXPRESION," ",0,$1);}
-           | expresionMixta {$$ = nuevo_nodo_expresion(EXPRESION," ",0,$1);}
+expresion: expresionEntera {$$ = $1;}
+           | expresionFloat {$$ = $1;}
+           | expresionMixta {$$ = $1;}
 
 condicion:      expresion AND expresion {$$ = nuevo_nodo_expresion(CONDICION,"&&",$1,$3);}
                 | expresion OR expresion {$$ = nuevo_nodo_expresion(CONDICION,"||",$1,$3);}
@@ -336,6 +327,12 @@ condicion:      expresion AND expresion {$$ = nuevo_nodo_expresion(CONDICION,"&&
                                                     ast_node* variable = nuevo_nodo_variable($3);
                                                     $$ = nuevo_nodo_expresion(CONDICION,"<",$1,variable);
                                                 }
+                | NOT VARIABLE {
+                                           ast_node* variable = nuevo_nodo_variable($2);
+                                           $$ = nuevo_nodo_expresion(CONDICION,"!",0,variable);
+                                         }
+                
+                
                 | VARIABLE AND expresion {
                                            ast_node* variable = nuevo_nodo_variable($1);
                                            $$ = nuevo_nodo_expresion(CONDICION,"&&",variable,$3);

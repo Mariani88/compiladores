@@ -1,3 +1,6 @@
+#ifndef TABLA_C
+#define TABLA_C
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -198,4 +201,6 @@ void comprobarVariasVariables(t_simbolo a, t_simbolo b ,t_simbolo c){
         yyerror("La variable a la cual asignar debe ser del tipo float.");
     }
 }    
+
+#endif /* TABLA_C */
 
