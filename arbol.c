@@ -161,7 +161,7 @@ void mostrarArbol(struct nodo_as* arbol)
     mostrarArbol(arbol->right);
 }
 
-/* Escribe en un fichero los datos del nodo que se está recorriendo. Se incluye la impresion por consola de nodos irrelevantes sólo para comprobar que el arbol no los contenga. */
+/* Escribe en un fichero los datos del nodo que se está recorriendo. Se incluye la impresion por consola en caracter de pruebas */
 void escribirValorDeNodo(FILE* archivo,nodo_as* arbol)
 {
     switch (arbol->tipoNodo)
@@ -291,6 +291,14 @@ void escribirValorDeNodo(FILE* archivo,nodo_as* arbol)
         printf("Nodo sentencia\n");
         break;
 
+    case SENTENCIA_IF:
+        printf("Nodo if\n");
+        break;
+
+    case SENTENCIA_WHILE:
+        printf("Nodo while\n");
+        break;    
+        
     case CUERPO:
         printf("Nodo cuerpo\n");
         break;
@@ -360,7 +368,8 @@ void escribirValorDeNodo(FILE* archivo,nodo_as* arbol)
         break;
 
     default:
-        archivo = fopen("F:\codigoIntermedio.txt", "a");
+        archivo = fopen("codigoIntermedio.txt", "a");
+        fprintf(archivo,"Tipo de nodo: %d",arbol->tipoNodo);
         fprintf(archivo,"DESCONOCIDO\n");
         fclose(archivo);
         break;
