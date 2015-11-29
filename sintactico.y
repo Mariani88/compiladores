@@ -32,7 +32,6 @@ int yyerror(const char *mensaje) { printf("Error sintactico: %s\n",mensaje);}
 %token <tipo> DEFENTERO
 %token <tipo> DEFFLOTANTE
 %token <tipo> DEFCHAR
-%token <tipo> DEFCONSTANTE
 %token <tipo> DEFSTRING
 %token <tipo> DEFBOOLEANO
 
@@ -79,10 +78,7 @@ int yyerror(const char *mensaje) { printf("Error sintactico: %s\n",mensaje);}
 programa: MAIN LLAVEABRE cuerpo LLAVECIERRA {   
                                                 $3->tipoNodo = MAIN;
                                                 $$ = $3;
-                                                //mostrarArbol($3);
-                                                //comprobarArbol($3);
                                                 imprimirArchivo($3);
-                                                //recorrerInOrder($3);
                                              }
 
 cuerpo: sentencia cuerpo {
@@ -221,12 +217,7 @@ declaracion: DEFENTERO  VARIABLE  FINDELINEA  {
                                               $$ = variable;
                                               if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");}
                                             }
-             | DEFCONSTANTE  VARIABLE  FINDELINEA  {
-                                                       nodo_as* variable = 0;
-                                                       $$ = variable;
-                                                       if(!existe($2)){agregar (  $1, $2);}else{yyerror("La variable definida ya existe.");
-                                                       }
-                                                     }
+                                            
              | DEFSTRING  VARIABLE  FINDELINEA {
                                                        nodo_as* variable = 0; 
                                                        $$ = variable;
@@ -336,9 +327,9 @@ condicion:      expresion AND expresion {$$ = nuevo_nodo_expresion(CONDICION,"&&
                                                     $$ = nuevo_nodo_expresion(CONDICION,"<",$1,variable);
                                                 }
                 | NOT VARIABLE {
-                                           nodo_as* variable = nuevo_nodo_variable($2);
-                                           $$ = nuevo_nodo_expresion(CONDICION,"!",0,variable);
-                                         }
+                                  nodo_as* variable = nuevo_nodo_variable($2);
+                                  $$ = nuevo_nodo_expresion(CONDICION,"!",0,variable);
+                               }
                 
                 
                 | VARIABLE AND expresion {

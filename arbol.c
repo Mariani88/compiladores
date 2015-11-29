@@ -51,6 +51,7 @@ typedef struct nodo_as
     struct nodo_as* right;
 } nodo_as;
 
+/* Utilizado para comprobar el tipo de nodo de cada arbol. */
 void imprimirTipoDeNodo(nodo_as* arbol)
 {
     switch (arbol->tipoNodo)
@@ -86,14 +87,6 @@ void imprimirTipoDeNodo(nodo_as* arbol)
 
     case ASIGNACION:
         printf("Nodo asignacion\n");
-        break;
-
-    case EXPRESION:
-        printf("Nodo expresion\n");
-        break;
-
-    case EXPRESION_ENTERA:
-        printf("Nodo expresion entera\n");
         break;
 
     case TERMINO_ENTERO:
@@ -158,45 +151,17 @@ void imprimirTipoDeNodo(nodo_as* arbol)
     }
 }
 
-void imprimirArbol(nodo_as* arbol)
-{
-    int esNodoHoja = 0;
-    struct nodo_as* nodoActual = arbol;
-    while (nodoActual->left)
-    {
-        printf("Tipo de nodo:%d \n", nodoActual->tipoNodo);
-        nodoActual = nodoActual->left;
-        if (!nodoActual->left)
-        {
-            printf("Tipo de nodo:%d \n", nodoActual->tipoNodo);
-        }
-    }
-}
+/* Usado sólo para comprobar la construccion del arbol */
 void mostrarArbol(struct nodo_as* arbol)
 {
     if (arbol == NULL )
         return;
-
-    //printf("%d\n", arbol->tipoNodo);
     imprimirTipoDeNodo(arbol);
     mostrarArbol(arbol->left);
-    //printf("Fin del nodo izquierdo\n ");
     mostrarArbol(arbol->right);
-    //printf("Fin del nodo derecho\n ");
 }
 
-void recorrerInOrder(struct nodo_as* arbol)
-{
-    if (arbol == NULL )
-        return;
-
-    recorrerInOrder(arbol->left);
-    imprimirTipoDeNodo(arbol);
-    recorrerInOrder(arbol->right);
-}
-
-
-
+/* Escribe en un fichero los datos del nodo que se está recorriendo. Se incluye la impresion por consola de nodos irrelevantes sólo para comprobar que el arbol no los contenga. */
 void escribirValorDeNodo(FILE* archivo,nodo_as* arbol)
 {
     switch (arbol->tipoNodo)
@@ -212,6 +177,7 @@ void escribirValorDeNodo(FILE* archivo,nodo_as* arbol)
         break;
 
     case FACTOR_FLOAT:
+        printf("Nodo factor float\n");
         break;
 
     case TERMINO_FLOAT:
@@ -321,15 +287,6 @@ void escribirValorDeNodo(FILE* archivo,nodo_as* arbol)
         fclose(archivo);
         break;
 
-    case SENTENCIA_IF:
-        archivo = fopen("archivoTP.txt", "a");
-        if (archivo == NULL)
-        {
-            perror ("Error al abrir el fichero\n");
-        }
-        fclose(archivo);
-        break;
-
     case SENTENCIA:
         printf("Nodo sentencia\n");
         break;
@@ -433,7 +390,6 @@ void imprimirArchivo(nodo_as* arbol)
             fclose(archivo);
         }
         imprimirArchivo(arbol->right);
-
     }
     else
     {
@@ -447,32 +403,6 @@ void imprimirArchivo(nodo_as* arbol)
         imprimirArchivo(arbol->right);
         escribirValorDeNodo(archivo,arbol);
     }
-}
-
-void comprobarArbol(struct nodo_as* arbol)
-{
-    /*
-    struct nodo_as* nodoActual = arbol;
-    printf("%d\n", nodoActual->tipoNodo);
-    nodoActual = nodoActual->right;
-    printf("%d\n", nodoActual->tipoNodo);
-    nodoActual = nodoActual->right;
-    printf("%d\n", nodoActual->tipoNodo);
-    nodoActual = nodoActual->right;
-    printf("%d\n", nodoActual->tipoNodo);
-    */
-
-    struct nodo_as* nodoActual = arbol;
-    imprimirTipoDeNodo( nodoActual);
-    nodoActual = nodoActual->right;
-    imprimirTipoDeNodo( nodoActual);
-    nodoActual = nodoActual->right;
-    imprimirTipoDeNodo( nodoActual);
-    nodoActual = nodoActual->right;
-    imprimirTipoDeNodo( nodoActual);
-
-    nodoActual = nodoActual->right;
-    imprimirTipoDeNodo( nodoActual);
 }
 
 struct nodo_as* nuevo_nodo_expresion(int tipoNodo, char* operador,

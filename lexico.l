@@ -25,7 +25,6 @@ float   "float"
 char    "char"
 string  "string" 
 boolean "boolean"
-const   "const"
 
 %%
 ";"        { return FINDELINEA; }
@@ -33,7 +32,6 @@ const   "const"
 {int}      {strcpy (yylval.tipo, yytext);return  DEFENTERO;}
 {float}    {strcpy (yylval.tipo, yytext);return  DEFFLOTANTE;}
 {char}     {strcpy (yylval.tipo, yytext);return  DEFCHAR;}
-{const}    {strcpy (yylval.tipo, yytext);return  DEFCONSTANTE;}
 {string}   {strcpy (yylval.tipo, yytext);return  DEFSTRING;}
 {boolean}  {strcpy (yylval.tipo, yytext);return  DEFBOOLEANO;}
 
