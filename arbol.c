@@ -167,7 +167,7 @@ void escribirValorDeNodo(FILE* archivo,nodo_as* arbol)
     switch (arbol->tipoNodo)
     {
     case HOJA_ENTERO:
-        archivo = fopen("archivoTP.txt", "a");
+        archivo = fopen("codigoIntermedio.txt", "a");
         if (archivo == NULL)
         {
             perror ("Error al abrir el fichero\n");
@@ -185,7 +185,7 @@ void escribirValorDeNodo(FILE* archivo,nodo_as* arbol)
         break;
 
     case EXPRESION_FLOAT:
-        archivo = fopen("archivoTP.txt", "a");
+        archivo = fopen("codigoIntermedio.txt", "a");
         if (archivo == NULL)
         {
             perror ("Error al abrir el fichero\n");
@@ -200,7 +200,7 @@ void escribirValorDeNodo(FILE* archivo,nodo_as* arbol)
         break;
 
     case ASIGNACION:
-        archivo = fopen("archivoTP.txt", "a");
+        archivo = fopen("codigoIntermedio.txt", "a");
         if (archivo == NULL)
         {
             perror ("Error al abrir el fichero\n");
@@ -210,7 +210,7 @@ void escribirValorDeNodo(FILE* archivo,nodo_as* arbol)
         break;
 
     case SUMA_MIXTA:
-        archivo = fopen("archivoTP.txt", "a");
+        archivo = fopen("codigoIntermedio.txt", "a");
         if (archivo == NULL)
         {
             perror ("Error al abrir el fichero\n");
@@ -220,7 +220,7 @@ void escribirValorDeNodo(FILE* archivo,nodo_as* arbol)
         break;
 
     case RESTA_MIXTA:
-        archivo = fopen("archivoTP.txt", "a");
+        archivo = fopen("codigoIntermedio.txt", "a");
         if (archivo == NULL)
         {
             perror ("Error al abrir el fichero\n");
@@ -230,7 +230,7 @@ void escribirValorDeNodo(FILE* archivo,nodo_as* arbol)
         break;
 
     case MULTIPLICACION_MIXTA:
-        archivo = fopen("archivoTP.txt", "a");
+        archivo = fopen("codigoIntermedio.txt", "a");
         if (archivo == NULL)
         {
             perror ("Error al abrir el fichero\n");
@@ -244,7 +244,7 @@ void escribirValorDeNodo(FILE* archivo,nodo_as* arbol)
         break;
 
     case TERMINO_ENTERO:
-        archivo = fopen("archivoTP.txt", "a");
+        archivo = fopen("codigoIntermedio.txt", "a");
         if (archivo == NULL)
         {
             perror ("Error al abrir el fichero\n");
@@ -254,7 +254,7 @@ void escribirValorDeNodo(FILE* archivo,nodo_as* arbol)
         break;
 
     case EXPRESION_ENTERA:
-        archivo = fopen("archivoTP.txt", "a");
+        archivo = fopen("codigoIntermedio.txt", "a");
         if (archivo == NULL)
         {
             perror ("Error al abrir el fichero\n");
@@ -265,7 +265,7 @@ void escribirValorDeNodo(FILE* archivo,nodo_as* arbol)
         break;
 
     case EXPRESION:
-        archivo = fopen("archivoTP.txt", "a");
+        archivo = fopen("codigoIntermedio.txt", "a");
         if (archivo == NULL)
         {
             perror ("Error al abrir el fichero\n");
@@ -276,7 +276,7 @@ void escribirValorDeNodo(FILE* archivo,nodo_as* arbol)
         break;
 
     case CONDICION:
-        archivo = fopen("archivoTP.txt", "a");
+        archivo = fopen("codigoIntermedio.txt", "a");
         if (archivo == NULL)
         {
             perror ("Error al abrir el fichero\n");
@@ -300,7 +300,7 @@ void escribirValorDeNodo(FILE* archivo,nodo_as* arbol)
         break;
 
     case HOJA_VARIABLE:
-        archivo = fopen("archivoTP.txt", "a");
+        archivo = fopen("codigoIntermedio.txt", "a");
         if (archivo == NULL)
         {
             perror ("Error al abrir el fichero\n");
@@ -310,7 +310,7 @@ void escribirValorDeNodo(FILE* archivo,nodo_as* arbol)
         break;
 
     case HOJA_FLOTANTE:
-        archivo = fopen("archivoTP.txt", "a");
+        archivo = fopen("codigoIntermedio.txt", "a");
         if (archivo == NULL)
         {
             perror ("Error al abrir el fichero\n");
@@ -320,7 +320,7 @@ void escribirValorDeNodo(FILE* archivo,nodo_as* arbol)
         break;
 
     case DIVISION_MIXTA:
-        archivo = fopen("archivoTP.txt", "a");
+        archivo = fopen("codigoIntermedio.txt", "a");
         if (archivo == NULL)
         {
             perror ("Error al abrir el fichero\n");
@@ -330,7 +330,7 @@ void escribirValorDeNodo(FILE* archivo,nodo_as* arbol)
         break;
 
     case HOJA_CARACTER:
-        archivo = fopen("archivoTP.txt", "a");
+        archivo = fopen("codigoIntermedio.txt", "a");
         if (archivo == NULL)
         {
             perror ("Error al abrir el fichero\n");
@@ -340,7 +340,7 @@ void escribirValorDeNodo(FILE* archivo,nodo_as* arbol)
         break;
 
     case HOJA_STRING:
-        archivo = fopen("archivoTP.txt", "a");
+        archivo = fopen("codigoIntermedio.txt", "a");
         if (archivo == NULL)
         {
             perror ("Error al abrir el fichero\n");
@@ -350,7 +350,7 @@ void escribirValorDeNodo(FILE* archivo,nodo_as* arbol)
         break;
 
     case HOJA_BOOLEAN:
-        archivo = fopen("archivoTP.txt", "a");
+        archivo = fopen("codigoIntermedio.txt", "a");
         if (archivo == NULL)
         {
             perror ("Error al abrir el fichero\n");
@@ -360,7 +360,7 @@ void escribirValorDeNodo(FILE* archivo,nodo_as* arbol)
         break;
 
     default:
-        archivo = fopen("F:\archivoTP.txt", "a");
+        archivo = fopen("F:\codigoIntermedio.txt", "a");
         fprintf(archivo,"DESCONOCIDO\n");
         fclose(archivo);
         break;
@@ -376,7 +376,7 @@ void imprimirArchivo(nodo_as* arbol)
     FILE* archivo;
     if(arbol->tipoNodo == SENTENCIA_IF)
     {
-        archivo = fopen("archivoTP.txt","a");
+        archivo = fopen("codigoIntermedio.txt","a");
         fprintf(archivo,"IF");
         fclose(archivo);
         imprimirArchivo(arbol->left);
@@ -384,7 +384,7 @@ void imprimirArchivo(nodo_as* arbol)
         if(arbol->central != NULL)
         {
             imprimirArchivo(arbol->central);
-            archivo = fopen("archivoTP.txt","a");
+            archivo = fopen("codigoIntermedio.txt","a");
             fprintf(archivo,"labelFalse%d",contadorDeEtiquetasFalse);
             contadorDeEtiquetasFalse++;
             fclose(archivo);
@@ -395,7 +395,7 @@ void imprimirArchivo(nodo_as* arbol)
     {
         if(arbol->tipoNodo == SENTENCIA_WHILE)
         {
-            archivo = fopen("archivoTP.txt","a");
+            archivo = fopen("codigoIntermedio.txt","a");
             fprintf(archivo,"WHILE");
             fclose(archivo);
         }
