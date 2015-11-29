@@ -7,265 +7,577 @@
 #include <string.h>
 #include "tabla.c"
 
-#define HOJAENTERO 1
-#define FACTOR 2
-#define TERMINO 3
-#define EXPRESIONFLOAT 4
-#define DECLARACION 5
-#define ASIGNACION 6
-#define SUMAMIXTA 7
-#define RESTAMIXTA 8
-#define MULTIPLICACIONMIXTA 9
-#define FACTORENTERO 10
-#define TERMINOENTERO 11
-#define EXPRESIONENTERA 12
-#define EXPRESION 13
-#define CONDICION 14
-#define SENTENCIAIF 15
-#define SENTENCIAWHILE 16
-#define SENTENCIA 17
-#define CUERPO 18
-#define MAIN 19
-#define HOJAVARIABLE 20
-#define HOJAFLOTANTE 21
-#define HOJASTRING 22
-#define DIVISIONMIXTA 23
-#define HOJACARACTER 24
-#define HOJABOOLEAN 25
-#define SUMA 26
-#define RESTA 27
-#define MULTIPLICACION 28
-#define DIVISION 29
+#define MAIN 1
+#define CUERPO 2
+#define DECLARACION 3
+#define ASIGNACION 4
+#define CONDICION 5
+#define SENTENCIA_IF 6
+#define SENTENCIA_WHILE 7
+#define SENTENCIA 8
+#define SUMA_MIXTA 9
+#define RESTA_MIXTA 10
+#define MULTIPLICACION_MIXTA 11
+#define DIVISION_MIXTA 12
+#define FACTOR_ENTERO 13
+#define TERMINO_ENTERO 14
+#define EXPRESION_ENTERA 15
+#define FACTOR_FLOAT 16
+#define TERMINO_FLOAT 17
+#define EXPRESION_FLOAT 18
+#define EXPRESION 19
+#define HOJA_ENTERO 20
+#define HOJA_FLOTANTE 21
+#define HOJA_CARACTER 22
+#define HOJA_STRING 23
+#define HOJA_BOOLEAN 24
+#define HOJA_VARIABLE 25
 
-typedef struct ast_node {
-	char* operador;
-	char* variable;
-	int tipoNodo;
-	int valorEntero;
-	char* valorCaracter;
-	float valorFlotante;
-	char* valorString;
-	char* valorBoolean;
-	struct ast_node* central;
-	struct ast_node* left;
-	struct ast_node* right;
-} ast_node;
+static int contadorDeEtiquetasTrue = 1;
+static int contadorDeEtiquetasFalse = 1;
 
-void imprimirTipoDeNodo(ast_node* arbol) {
-	switch (arbol->tipoNodo) {
-	case 1:
-		printf("Nodo entero\n");
-		break;
-	case 2:
-		printf("Nodo factor float\n");
-		break;
-	case 3:
-		printf("Nodo termino float\n");
-		break;
-	case 4:
-		printf("Nodo expresion float\n");
-		break;
-	case 5:
-		printf("Nodo declaracion\n");
-		break;
-	case 6:
-		printf("Nodo asignacion\n");
-		break;
-	case 7:
-		printf("Nodo suma mixta\n");
-		break;
-	case 8:
-		printf("Nodo resta mixta\n");
-		break;
-	case 9:
-		printf("Nodo multiplicacion mixta\n");
-		break;
-	case 10:
-		printf("Nodo factor entero\n");
-		break;
-	case 11:
-		printf("Nodo termino entero\n");
-		break;
-	case 12:
-		printf("Nodo expresion entera\n");
-		break;
-	case 13:
-		printf("Nodo expresion\n");
-		break;
-	case 14:
-		printf("Nodo condicion\n");
-		break;
-	case 15:
-		printf("Nodo if\n");
-		break;
-	case 16:
-		printf("Nodo while\n");
-		break;
-	case 17:
-		printf("Nodo sentencia\n");
-		break;
-	case 18:
-		printf("Nodo cuerpo\n");
-		break;
-	case 19:
-		printf("Nodo main\n");
-		break;
-	case 20:
-		printf("Nodo variable\n");
-		break;
-	case 21:
-		printf("Nodo flotante\n");
-		break;
-	case 22:
-		printf("Nodo string\n");
-		break;
-	case 23:
-		printf("Nodo division mixta\n");
-		break;
-	case 24:
-		printf("Nodo caracter\n");
-		break;
-	case 25:
-		printf("Nodo boolean\n");
-		break;
+typedef struct nodo_as
+{
+    char* operador;
+    char* variable;
+    int tipoNodo;
+    int valorEntero;
+    char* valorCaracter;
+    float valorFlotante;
+    char* valorString;
+    char* valorBoolean;
+    struct nodo_as* left;
+    struct nodo_as* central;
+    struct nodo_as* right;
+} nodo_as;
 
-	default:
-		printf("DESCONOCIDO\n");
-		break;
-	}
+void imprimirTipoDeNodo(nodo_as* arbol)
+{
+    switch (arbol->tipoNodo)
+    {
+
+    case MAIN:
+        printf("Nodo main\n");
+        break;
+
+    case CUERPO:
+        printf("Nodo cuerpo\n");
+        break;
+
+    case SENTENCIA:
+        printf("Nodo sentencia\n");
+        break;
+
+    case CONDICION:
+        printf("Nodo condicion\n");
+        break;
+
+    case SENTENCIA_IF:
+        printf("Nodo if\n");
+        break;
+
+    case SENTENCIA_WHILE:
+        printf("Nodo while\n");
+        break;
+
+    case DECLARACION:
+        printf("Nodo declaracion\n");
+        break;
+
+    case ASIGNACION:
+        printf("Nodo asignacion\n");
+        break;
+
+    case EXPRESION:
+        printf("Nodo expresion\n");
+        break;
+
+    case EXPRESION_ENTERA:
+        printf("Nodo expresion entera\n");
+        break;
+
+    case TERMINO_ENTERO:
+        printf("Nodo termino entero\n");
+        break;
+
+    case FACTOR_ENTERO:
+        printf("Nodo factor entero\n");
+        break;
+
+    case TERMINO_FLOAT:
+        printf("Nodo termino float\n");
+        break;
+
+    case FACTOR_FLOAT:
+        printf("Nodo factor float\n");
+        break;
+
+    case HOJA_ENTERO:
+        printf("Nodo entero\n");
+        break;
+
+    case HOJA_FLOTANTE:
+        printf("Nodo flotante\n");
+        break;
+
+    case HOJA_STRING:
+        printf("Nodo string\n");
+        break;
+
+    case HOJA_CARACTER:
+        printf("Nodo caracter\n");
+        break;
+
+    case HOJA_BOOLEAN:
+        printf("Nodo boolean\n");
+        break;
+
+    case HOJA_VARIABLE:
+        printf("Nodo variable\n");
+        break;
+
+    case SUMA_MIXTA:
+        printf("Nodo suma mixta\n");
+        break;
+
+    case RESTA_MIXTA:
+        printf("Nodo resta mixta\n");
+        break;
+
+    case MULTIPLICACION_MIXTA:
+        printf("Nodo multiplicacion mixta\n");
+        break;
+
+    case DIVISION_MIXTA:
+        printf("Nodo division mixta\n");
+        break;
+
+    default:
+        printf("DESCONOCIDO\n");
+        break;
+    }
 }
 
-void imprimirArbol(ast_node* arbol) {
-	int esNodoHoja = 0;
-	struct ast_node* nodoActual = arbol;
-	while (nodoActual->left) {
-		printf("Tipo de nodo:%d \n", nodoActual->tipoNodo);
-		nodoActual = nodoActual->left;
-		if (!nodoActual->left) {
-			printf("Tipo de nodo:%d \n", nodoActual->tipoNodo);
-		}
-	}
+void imprimirArbol(nodo_as* arbol)
+{
+    int esNodoHoja = 0;
+    struct nodo_as* nodoActual = arbol;
+    while (nodoActual->left)
+    {
+        printf("Tipo de nodo:%d \n", nodoActual->tipoNodo);
+        nodoActual = nodoActual->left;
+        if (!nodoActual->left)
+        {
+            printf("Tipo de nodo:%d \n", nodoActual->tipoNodo);
+        }
+    }
 }
-void mostrarArbol(struct ast_node* arbol) {
-	if (arbol == NULL )
-		return;
+void mostrarArbol(struct nodo_as* arbol)
+{
+    if (arbol == NULL )
+        return;
 
-	//printf("%d\n", arbol->tipoNodo);
-	imprimirTipoDeNodo(arbol);
-	mostrarArbol(arbol->left);
-//printf("Fin del nodo izquierdo\n ");
-	mostrarArbol(arbol->right);
-//printf("Fin del nodo derecho\n ");
-}
-
-void comprobarArbol(struct ast_node* arbol) {
-	/*
-	struct ast_node* nodoActual = arbol;
-	printf("%d\n", nodoActual->tipoNodo);
-	nodoActual = nodoActual->right;
-	printf("%d\n", nodoActual->tipoNodo);
-	nodoActual = nodoActual->right;
-	printf("%d\n", nodoActual->tipoNodo);
-	nodoActual = nodoActual->right;
-	printf("%d\n", nodoActual->tipoNodo);
-	*/
-
-struct ast_node* nodoActual = arbol;
-imprimirTipoDeNodo( nodoActual);
-nodoActual = nodoActual->right;
-imprimirTipoDeNodo( nodoActual);
-nodoActual = nodoActual->right;
-imprimirTipoDeNodo( nodoActual);
-nodoActual = nodoActual->right;
-imprimirTipoDeNodo( nodoActual);
-
-nodoActual = nodoActual->right;
-imprimirTipoDeNodo( nodoActual);
+    //printf("%d\n", arbol->tipoNodo);
+    imprimirTipoDeNodo(arbol);
+    mostrarArbol(arbol->left);
+    //printf("Fin del nodo izquierdo\n ");
+    mostrarArbol(arbol->right);
+    //printf("Fin del nodo derecho\n ");
 }
 
-struct ast_node* nuevo_nodo_expresion(int tipoNodo, char* operador,
-	struct ast_node* left, struct ast_node* right) {
-struct ast_node* nuevoNodo = (struct ast_node*) malloc(sizeof(struct ast_node));
-nuevoNodo->operador = (char*) malloc(sizeof(char) * 2);
-strcpy(nuevoNodo->operador, operador);
-nuevoNodo->tipoNodo = tipoNodo;
-nuevoNodo->central = 0;
-nuevoNodo->right = right;
-nuevoNodo->left = left;
-return nuevoNodo;
+void recorrerInOrder(struct nodo_as* arbol)
+{
+    if (arbol == NULL )
+        return;
+
+    recorrerInOrder(arbol->left);
+    imprimirTipoDeNodo(arbol);
+    recorrerInOrder(arbol->right);
 }
 
-struct ast_node* nuevo_nodo_if(struct ast_node* condicion,
-	struct ast_node* central, struct ast_node* right) {
-struct ast_node* nuevoNodo = (struct ast_node*) malloc(sizeof(struct ast_node));
-nuevoNodo->operador = 0;
-nuevoNodo->tipoNodo = SENTENCIAIF;
-nuevoNodo->central = central;
-nuevoNodo->right = right;
-nuevoNodo->left = condicion;
-return nuevoNodo;
+
+
+void escribirValorDeNodo(FILE* archivo,nodo_as* arbol)
+{
+    switch (arbol->tipoNodo)
+    {
+    case HOJA_ENTERO:
+        archivo = fopen("archivoTP.txt", "a");
+        if (archivo == NULL)
+        {
+            perror ("Error al abrir el fichero\n");
+        }
+        fprintf(archivo," %d ",arbol->valorEntero);
+        fclose(archivo);
+        break;
+
+    case FACTOR_FLOAT:
+        break;
+
+    case TERMINO_FLOAT:
+        printf("Nodo termino float\n");
+        break;
+
+    case EXPRESION_FLOAT:
+        archivo = fopen("archivoTP.txt", "a");
+        if (archivo == NULL)
+        {
+            perror ("Error al abrir el fichero\n");
+        }
+        fprintf(archivo,"+");
+        fclose(archivo);
+        printf("Nodo expresion entera\n");
+        break;
+
+    case DECLARACION:
+        printf("Nodo declaracion\n");
+        break;
+
+    case ASIGNACION:
+        archivo = fopen("archivoTP.txt", "a");
+        if (archivo == NULL)
+        {
+            perror ("Error al abrir el fichero\n");
+        }
+        fprintf(archivo,"= \n");
+        fclose(archivo);
+        break;
+
+    case SUMA_MIXTA:
+        archivo = fopen("archivoTP.txt", "a");
+        if (archivo == NULL)
+        {
+            perror ("Error al abrir el fichero\n");
+        }
+        fprintf(archivo,"+");
+        fclose(archivo);
+        break;
+
+    case RESTA_MIXTA:
+        archivo = fopen("archivoTP.txt", "a");
+        if (archivo == NULL)
+        {
+            perror ("Error al abrir el fichero\n");
+        }
+        fprintf(archivo,"-");
+        fclose(archivo);
+        break;
+
+    case MULTIPLICACION_MIXTA:
+        archivo = fopen("archivoTP.txt", "a");
+        if (archivo == NULL)
+        {
+            perror ("Error al abrir el fichero\n");
+        }
+        fprintf(archivo,"*");
+        fclose(archivo);
+        break;
+
+    case FACTOR_ENTERO:
+        printf("Nodo factor entero\n");
+        break;
+
+    case TERMINO_ENTERO:
+        archivo = fopen("archivoTP.txt", "a");
+        if (archivo == NULL)
+        {
+            perror ("Error al abrir el fichero\n");
+        }
+        fprintf(archivo,"*");
+        fclose(archivo);
+        break;
+
+    case EXPRESION_ENTERA:
+        archivo = fopen("archivoTP.txt", "a");
+        if (archivo == NULL)
+        {
+            perror ("Error al abrir el fichero\n");
+        }
+        fprintf(archivo,"%s",arbol->operador);
+        fclose(archivo);
+        printf("Nodo expresion entera\n");
+        break;
+
+    case EXPRESION:
+        archivo = fopen("archivoTP.txt", "a");
+        if (archivo == NULL)
+        {
+            perror ("Error al abrir el fichero\n");
+        }
+        fprintf(archivo,"%s",arbol->operador);
+        fclose(archivo);
+        printf("Nodo expresion\n");
+        break;
+
+    case CONDICION:
+        archivo = fopen("archivoTP.txt", "a");
+        if (archivo == NULL)
+        {
+            perror ("Error al abrir el fichero\n");
+        }
+        fprintf(archivo,"%s goto labelTrue%d \n",arbol->operador,contadorDeEtiquetasTrue);
+        fprintf(archivo,"%s%d","labelTrue",contadorDeEtiquetasTrue);
+        contadorDeEtiquetasTrue++;
+        fclose(archivo);
+        break;
+
+    case SENTENCIA_IF:
+        archivo = fopen("archivoTP.txt", "a");
+        if (archivo == NULL)
+        {
+            perror ("Error al abrir el fichero\n");
+        }
+        fclose(archivo);
+        break;
+
+    case SENTENCIA:
+        printf("Nodo sentencia\n");
+        break;
+
+    case CUERPO:
+        printf("Nodo cuerpo\n");
+        break;
+
+    case MAIN:
+        printf("Nodo main\n");
+        break;
+
+    case HOJA_VARIABLE:
+        archivo = fopen("archivoTP.txt", "a");
+        if (archivo == NULL)
+        {
+            perror ("Error al abrir el fichero\n");
+        }
+        fprintf(archivo," %s ",arbol->variable);
+        fclose(archivo);
+        break;
+
+    case HOJA_FLOTANTE:
+        archivo = fopen("archivoTP.txt", "a");
+        if (archivo == NULL)
+        {
+            perror ("Error al abrir el fichero\n");
+        }
+        fprintf(archivo,"%f",arbol->valorFlotante);
+        fclose(archivo);
+        break;
+
+    case DIVISION_MIXTA:
+        archivo = fopen("archivoTP.txt", "a");
+        if (archivo == NULL)
+        {
+            perror ("Error al abrir el fichero\n");
+        }
+        fprintf(archivo,"/");
+        fclose(archivo);
+        break;
+
+    case HOJA_CARACTER:
+        archivo = fopen("archivoTP.txt", "a");
+        if (archivo == NULL)
+        {
+            perror ("Error al abrir el fichero\n");
+        }
+        fprintf(archivo,"%s",arbol->valorCaracter);
+        fclose(archivo);
+        break;
+
+    case HOJA_STRING:
+        archivo = fopen("archivoTP.txt", "a");
+        if (archivo == NULL)
+        {
+            perror ("Error al abrir el fichero\n");
+        }
+        fprintf(archivo,"%s",arbol->valorString);
+        fclose(archivo);
+        break;
+
+    case HOJA_BOOLEAN:
+        archivo = fopen("archivoTP.txt", "a");
+        if (archivo == NULL)
+        {
+            perror ("Error al abrir el fichero\n");
+        }
+        fprintf(archivo,"%s",arbol->valorBoolean);
+        fclose(archivo);
+        break;
+
+    default:
+        archivo = fopen("F:\archivoTP.txt", "a");
+        fprintf(archivo,"DESCONOCIDO\n");
+        fclose(archivo);
+        break;
+    }
 }
 
-struct ast_node* nuevo_nodo_entero(int valor) {
-struct ast_node* nuevoNodo = (struct ast_node*) malloc(sizeof(struct ast_node));
-nuevoNodo->tipoNodo = HOJAENTERO;
-nuevoNodo->valorEntero = valor;
-nuevoNodo->right = 0;
-nuevoNodo->left = 0;
-nuevoNodo->central = 0;
-return nuevoNodo;
+void imprimirArchivo(nodo_as* arbol)
+{
+    if (arbol == NULL )
+    {
+        return;
+    }
+    FILE* archivo;
+    if(arbol->tipoNodo == SENTENCIA_IF)
+    {
+        archivo = fopen("archivoTP.txt","a");
+        fprintf(archivo,"IF");
+        fclose(archivo);
+        imprimirArchivo(arbol->left);
+        escribirValorDeNodo(archivo,arbol);
+        if(arbol->central != NULL)
+        {
+            imprimirArchivo(arbol->central);
+            archivo = fopen("archivoTP.txt","a");
+            fprintf(archivo,"labelFalse%d",contadorDeEtiquetasFalse);
+            contadorDeEtiquetasFalse++;
+            fclose(archivo);
+        }
+        imprimirArchivo(arbol->right);
+
+    }
+    else
+    {
+        if(arbol->tipoNodo == SENTENCIA_WHILE)
+        {
+            archivo = fopen("archivoTP.txt","a");
+            fprintf(archivo,"WHILE");
+            fclose(archivo);
+        }
+        imprimirArchivo(arbol->left);
+        imprimirArchivo(arbol->right);
+        escribirValorDeNodo(archivo,arbol);
+    }
 }
 
-struct ast_node* nuevo_nodo_variable(char* variable) {
-struct ast_node* nuevoNodo = (struct ast_node*) malloc(sizeof(struct ast_node));
-nuevoNodo->tipoNodo = HOJAVARIABLE;
-nuevoNodo->variable = (char*) malloc(sizeof(char) * 50);
-strcpy(nuevoNodo->variable, variable);
-nuevoNodo->central = 0;
-nuevoNodo->right = 0;
-nuevoNodo->left = 0;
-return nuevoNodo;
+void comprobarArbol(struct nodo_as* arbol)
+{
+    /*
+    struct nodo_as* nodoActual = arbol;
+    printf("%d\n", nodoActual->tipoNodo);
+    nodoActual = nodoActual->right;
+    printf("%d\n", nodoActual->tipoNodo);
+    nodoActual = nodoActual->right;
+    printf("%d\n", nodoActual->tipoNodo);
+    nodoActual = nodoActual->right;
+    printf("%d\n", nodoActual->tipoNodo);
+    */
+
+    struct nodo_as* nodoActual = arbol;
+    imprimirTipoDeNodo( nodoActual);
+    nodoActual = nodoActual->right;
+    imprimirTipoDeNodo( nodoActual);
+    nodoActual = nodoActual->right;
+    imprimirTipoDeNodo( nodoActual);
+    nodoActual = nodoActual->right;
+    imprimirTipoDeNodo( nodoActual);
+
+    nodoActual = nodoActual->right;
+    imprimirTipoDeNodo( nodoActual);
 }
 
-struct ast_node* nuevo_nodo_flotante(float valor) {
-struct ast_node* nuevoNodo = (struct ast_node*) malloc(sizeof(struct ast_node));
-nuevoNodo->tipoNodo = HOJAFLOTANTE;
-nuevoNodo->valorFlotante = valor;
-nuevoNodo->right = 0;
-nuevoNodo->left = 0;
-return nuevoNodo;
+struct nodo_as* nuevo_nodo_expresion(int tipoNodo, char* operador,
+                                     struct nodo_as* left, struct nodo_as* right)
+{
+    struct nodo_as* nuevoNodo = (struct nodo_as*) malloc(sizeof(struct nodo_as));
+    nuevoNodo->operador = (char*) malloc(sizeof(char) * 2);
+    strcpy(nuevoNodo->operador, operador);
+    nuevoNodo->tipoNodo = tipoNodo;
+    nuevoNodo->central = 0;
+    nuevoNodo->right = right;
+    nuevoNodo->left = left;
+    return nuevoNodo;
 }
 
-struct ast_node* nuevo_nodo_caracter(char* caracter) {
-struct ast_node* nuevoNodo = (struct ast_node*) malloc(sizeof(struct ast_node));
-nuevoNodo->tipoNodo = HOJACARACTER;
-nuevoNodo->valorCaracter = caracter;
-nuevoNodo->central = 0;
-nuevoNodo->left = 0;
-nuevoNodo->right = 0;
-return nuevoNodo;
+struct nodo_as* nuevo_nodo_if(struct nodo_as* condicion,
+                              struct nodo_as* central, struct nodo_as* right)
+{
+    struct nodo_as* nuevoNodo = (struct nodo_as*) malloc(sizeof(struct nodo_as));
+    nuevoNodo->operador = 0;
+    nuevoNodo->tipoNodo = SENTENCIA_IF;
+    nuevoNodo->left = condicion;
+    nuevoNodo->central = central;
+    nuevoNodo->right = right;
+    return nuevoNodo;
 }
 
-struct ast_node* nuevo_nodo_string(char* string) {
-struct ast_node* nuevoNodo = (struct ast_node*) malloc(sizeof(struct ast_node));
-nuevoNodo->tipoNodo = HOJASTRING;
-nuevoNodo->valorBoolean = (char*) malloc(sizeof(char) * 50);
-strcpy(nuevoNodo->valorString, string);
-nuevoNodo->central = 0;
-nuevoNodo->left = 0;
-nuevoNodo->right = 0;
-return nuevoNodo;
+struct nodo_as* nuevo_nodo_while(struct nodo_as* condicion, struct nodo_as* cuerpo)
+{
+    struct nodo_as* nuevoNodo = (struct nodo_as*) malloc(sizeof(struct nodo_as));
+    nuevoNodo->operador = 0;
+    nuevoNodo->tipoNodo = SENTENCIA_WHILE;
+    nuevoNodo->left = condicion;
+    nuevoNodo->central = 0;
+    nuevoNodo->right = cuerpo;
+    return nuevoNodo;
 }
 
-struct ast_node* nuevo_nodo_boolean(char* boolean) {
-struct ast_node* nuevoNodo = (struct ast_node*) malloc(sizeof(struct ast_node));
-nuevoNodo->tipoNodo = HOJABOOLEAN;
-nuevoNodo->valorBoolean = (char*) malloc(sizeof(char) * 10);
-strcpy(nuevoNodo->valorBoolean, boolean);
-nuevoNodo->central = 0;
-nuevoNodo->left = 0;
-nuevoNodo->right = 0;
-return nuevoNodo;
+struct nodo_as* nuevo_nodo_entero(int valor)
+{
+    struct nodo_as* nuevoNodo = (struct nodo_as*) malloc(sizeof(struct nodo_as));
+    nuevoNodo->tipoNodo = HOJA_ENTERO;
+    nuevoNodo->valorEntero = valor;
+    nuevoNodo->right = 0;
+    nuevoNodo->left = 0;
+    nuevoNodo->central = 0;
+    return nuevoNodo;
+}
+
+struct nodo_as* nuevo_nodo_variable(char* variable)
+{
+    struct nodo_as* nuevoNodo = (struct nodo_as*) malloc(sizeof(struct nodo_as));
+    nuevoNodo->tipoNodo = HOJA_VARIABLE;
+    nuevoNodo->variable = (char*) malloc(sizeof(char) * 50);
+    strcpy(nuevoNodo->variable, variable);
+    nuevoNodo->central = 0;
+    nuevoNodo->right = 0;
+    nuevoNodo->left = 0;
+    return nuevoNodo;
+}
+
+struct nodo_as* nuevo_nodo_flotante(float valor)
+{
+    struct nodo_as* nuevoNodo = (struct nodo_as*) malloc(sizeof(struct nodo_as));
+    nuevoNodo->tipoNodo = HOJA_FLOTANTE;
+    nuevoNodo->valorFlotante = valor;
+    nuevoNodo->right = 0;
+    nuevoNodo->left = 0;
+    return nuevoNodo;
+}
+
+struct nodo_as* nuevo_nodo_caracter(char* caracter)
+{
+    struct nodo_as* nuevoNodo = (struct nodo_as*) malloc(sizeof(struct nodo_as));
+    nuevoNodo->tipoNodo = HOJA_CARACTER;
+    nuevoNodo->valorCaracter = (char*) malloc(sizeof(char) * 50);
+    strcpy(nuevoNodo->valorCaracter, caracter);
+    nuevoNodo->central = 0;
+    nuevoNodo->left = 0;
+    nuevoNodo->right = 0;
+    return nuevoNodo;
+}
+
+struct nodo_as* nuevo_nodo_string(char* string)
+{
+    struct nodo_as* nuevoNodo = (struct nodo_as*) malloc(sizeof(struct nodo_as));
+    nuevoNodo->tipoNodo = HOJA_STRING;
+    nuevoNodo->valorString = (char*) malloc(sizeof(char) * 50);
+    strcpy(nuevoNodo->valorString, string);
+    nuevoNodo->central = 0;
+    nuevoNodo->left = 0;
+    nuevoNodo->right = 0;
+    return nuevoNodo;
+}
+
+struct nodo_as* nuevo_nodo_boolean(char* boolean)
+{
+    struct nodo_as* nuevoNodo = (struct nodo_as*) malloc(sizeof(struct nodo_as));
+    nuevoNodo->tipoNodo = HOJA_BOOLEAN;
+    nuevoNodo->valorBoolean = (char*) malloc(sizeof(char) * 10);
+    strcpy(nuevoNodo->valorBoolean, boolean);
+    nuevoNodo->central = 0;
+    nuevoNodo->left = 0;
+    nuevoNodo->right = 0;
+    return nuevoNodo;
 }
 #endif /* ARBOL_C */
 

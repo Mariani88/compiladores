@@ -22,7 +22,7 @@ Boolean "true"|"false"
 
 int     "int"
 float   "float"
-char	"char"
+char    "char"
 string  "string" 
 boolean "boolean"
 const   "const"
@@ -32,8 +32,8 @@ const   "const"
 {ignora}+  {}
 {int}      {strcpy (yylval.tipo, yytext);return  DEFENTERO;}
 {float}    {strcpy (yylval.tipo, yytext);return  DEFFLOTANTE;}
-{char}	   {strcpy (yylval.tipo, yytext);return  DEFCHAR;}
-{const}	   {strcpy (yylval.tipo, yytext);return  DEFCONSTANTE;}
+{char}     {strcpy (yylval.tipo, yytext);return  DEFCHAR;}
+{const}    {strcpy (yylval.tipo, yytext);return  DEFCONSTANTE;}
 {string}   {strcpy (yylval.tipo, yytext);return  DEFSTRING;}
 {boolean}  {strcpy (yylval.tipo, yytext);return  DEFBOOLEANO;}
 
@@ -55,22 +55,22 @@ const   "const"
 "*"        {return OPMULT;}
 "/"        {return OPDIV;}
 "&"        {return AND;}
-"||"  	   {return OR;}
-"!"  	   {return NOT;}
+"||"       {return OR;}
+"!"        {return NOT;}
 
-"main"	   {return MAIN;}
-"if"	   {return IF;}
-"else"	   {return ELSE;}
-"for"	   {return FOR;}
-"while"	   {return WHILE;}
+"main"     {return MAIN;}
+"if"       {return IF;}
+"else"     {return ELSE;}
+"for"      {return FOR;}
+"while"    {return WHILE;}
 
 
 {Int}      {yylval.numero = atoi(yytext);return ENTERO;}
 {Float}    {yylval.flotante = atof(yytext);return FLOTANTE;}
-{Boolean}  {return BOOLEANO;}
+{Boolean}  {strcpy (yylval.variable, yytext);return BOOLEANO;}
 {Variable} {strcpy (yylval.variable, yytext); return VARIABLE;}
-{Char}     {return CARACTER;}
-{String}   {return STRING;}
+{Char}     {strcpy (yylval.variable, yytext);return CARACTER;}
+{String}   {strcpy (yylval.variable, yytext);return STRING;}
 
 
 .{256,}    {printf("error lexico %d \n",yylineno);} 
